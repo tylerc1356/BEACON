@@ -12,4 +12,4 @@ do {
 
     Invoke-MainMenuSelection -Choice $choice -ToolkitRoot $ToolkitRoot
 
-} while ($choice -ne "5")
+} while ($choice -ne "6")

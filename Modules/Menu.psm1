@@ -1,9 +1,10 @@
 function Show-MainMenu {
     Write-Host "1. Run Device Inventory"
     Write-Host "2. Run System Health Check"
-    Write-Host "3. Open Reports Folder"
-    Write-Host "4. Open Logs Folder"
-    Write-Host "5. Exit"
+    Write-Host "3. View System Information"
+    Write-Host "4. Open Reports Folder"
+    Write-Host "5. Open Logs Folder"
+    Write-Host "6. Exit"
     Write-Host ""
 }
 
@@ -25,12 +26,17 @@ function Invoke-MainMenuSelection {
             Pause
         }
         "3" {
-            explorer (Join-Path $ToolkitRoot "Reports")
+            & (Join-Path $ToolkitRoot "SystemInfo\Get-SystemInfo.ps1")
+            Write-Host ""
+            Pause
         }
         "4" {
-            explorer (Join-Path $ToolkitRoot "Logs")
+            explorer (Join-Path $ToolkitRoot "Reports")
         }
         "5" {
+            explorer (Join-Path $ToolkitRoot "Logs")
+        }
+        "6" {
             Write-Host "Exiting Tyler Toolkit." -ForegroundColor Yellow
         }
         default {
