@@ -14,20 +14,21 @@ Write-Log -Message "System health check started for $env:COMPUTERNAME" -LogFile 
 $disk = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"
 $freePercent = [math]::Round(($disk.FreeSpace / $disk.Size) * 100, 2)
 
-$uptime = (Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
+$os = Get-CimInstance -ClassName Win32_OperatingSystem
+$uptime = (Get-Date) - $os.LastBootUpTime
 $uptimeDays = [math]::Round($uptime.TotalDays, 2)
 
 $internetTest = Test-Connection -ComputerName "8.8.8.8" -Count 2 -Quiet
 
 $healthResults = [PSCustomObject]@{
-    ComputerName = $env:COMPUTERNAME
-    CheckDate = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    DiskFreePercent = $freePercent
-    DiskStatus = if ($freePercent -ge 20) { "PASS" } elseif ($freePercent -ge 10) { "WARNING" } else { "FAIL" }
-    UptimeDays = $uptimeDays
-    UptimeStatus = if ($uptimeDays -le 14) { "PASS" } elseif ($uptimeDays -le 30) { "WARNING" } else { "FAIL" }
+    ComputerName      = $env:COMPUTERNAME
+    CheckDate         = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    DiskFreePercent   = $freePercent
+    DiskStatus        = if ($freePercent -ge 20) { "PASS" } elseif ($freePercent -ge 10) { "WARNING" } else { "FAIL" }
+    UptimeDays        = $uptimeDays
+    UptimeStatus      = if ($uptimeDays -le 14) { "PASS" } elseif ($uptimeDays -le 30) { "WARNING" } else { "FAIL" }
     InternetConnected = $internetTest
-    InternetStatus = if ($internetTest) { "PASS" } else { "FAIL" }
+    InternetStatus    = if ($internetTest) { "PASS" } else { "FAIL" }
 }
 
 $healthResults | Format-List
