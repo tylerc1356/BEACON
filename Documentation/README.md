@@ -1,20 +1,8 @@
-\# Tyler Toolkit
+\# Beacon
 
 
 
-\## Overview
-
-
-
-Tyler Toolkit is a modular Windows administration toolkit written in PowerShell.
-
-
-
-The goal of this project is to automate common IT administration tasks while providing a learning platform for PowerShell, Windows administration, networking, deployment, and systems management.
-
-
-
-\---
+\*\*Beacon\*\* is a PowerShell-based IT diagnostics and reporting toolkit designed to help quickly gather system information, run health checks, and generate HTML diagnostic reports.
 
 
 
@@ -22,135 +10,83 @@ The goal of this project is to automate common IT administration tasks while pro
 
 
 
-Version: 1.2
+v1.4.0
 
 
 
-\---
+\## Features
 
 
 
-\## Current Features
+\- Device inventory
 
+\- System health check
 
+\- System information dashboard
 
-\- Device Inventory
+\- HTML diagnostic report generation
 
-\- CSV Export
+\- Reports folder access
 
-\- Logging
+\- Logs folder access
 
-\- Reports
 
-\- Interactive Menu
 
+\## Full Report Includes
 
 
-\---
 
+\- System information
 
+\- Storage information
 
-\## Planned Modules
+\- Windows details
 
+\- Memory information
 
+\- Processor information
 
-\### Inventory
+\- BIOS and motherboard information
 
-\- Hardware Inventory
+\- Graphics/GPU information
 
-\- Software Inventory
+\- Security basics
 
-\- Health Report
+\- Important services
 
+\- Windows Update information
 
+\- Power/Battery information
 
-\### Deployment
+\- Event log summary
 
-\- Workstation Deployment
+\- Health summary
 
-\- Application Installation
 
-\- Printer Installation
 
+\## Requirements
 
 
-\### Networking
 
-\- Ping
+\- Windows 10 or Windows 11
 
-\- DNS
+\- PowerShell 7 recommended
 
-\- Trace Route
+\- Administrator privileges recommended for full diagnostics
 
-\- IP Information
 
 
+\## How to Run
 
-\### Security
 
-\- BitLocker
 
-\- Firewall
+Open PowerShell and run:
 
-\- Defender
 
 
+```powershell
 
-\### Reporting
+Set-Location "E:\\Beacon"
 
-\- CSV Reports
-
-\- HTML Reports
-
-
-
-\---
-
-
-
-\## Folder Structure
-
-
-
-TylerToolkit
-
-
-
-Inventory
-
-
-
-Deployment
-
-
-
-Networking
-
-
-
-Reports
-
-
-
-Logs
-
-
-
-Config
-
-
-
-Documentation
-
-
-
-\---
-
-
-
-\## Author
-
-
-
-Tyler Coukos
+.\\Beacon.ps1
 

@@ -1,5 +1,5 @@
-Tyler Toolkit
-Version 1.2.0
+BEACON
+Version 1.4.0
 
 Release Date:
 2026-06-26
