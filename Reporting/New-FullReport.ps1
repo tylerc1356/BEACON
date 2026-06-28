@@ -7,7 +7,7 @@ if (-not (Test-Path $reportFolder)) {
 }
 
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$reportPath = Join-Path $reportFolder "TylerToolkit-FullReport-$timestamp.html"
+$reportPath = Join-Path $reportFolder "BEACON-FullReport-$timestamp.html"
 
 $computer = Get-CimInstance Win32_ComputerSystem
 $os = Get-CimInstance Win32_OperatingSystem
@@ -114,7 +114,7 @@ $html = @"
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tyler Toolkit Full Report</title>
+    <title>BEACON Full Report</title>
     <style>
         body { font-family: Arial; margin: 40px; }
         h1 { color: #2b579a; }
@@ -127,7 +127,7 @@ $html = @"
     </style>
 </head>
 <body>
-    <h1>Tyler Toolkit Full Report</h1>
+    <h1>BEACON Full Report</h1>
     <p><strong>Generated:</strong> $(Get-Date)</p>
 
     <h2>System Information</h2>

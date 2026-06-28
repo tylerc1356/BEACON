@@ -43,7 +43,7 @@ function Invoke-MainMenuSelection {
             explorer (Join-Path $ToolkitRoot "Logs")
         }
         "7" {
-            Write-Host "Exiting Tyler Toolkit." -ForegroundColor Yellow
+            Write-Host "Exiting BEACON." -ForegroundColor Yellow
         }
         default {
             Write-Host "Invalid selection." -ForegroundColor Red
