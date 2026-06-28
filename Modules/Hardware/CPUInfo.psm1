@@ -1,5 +1,5 @@
 ﻿function Get-BECPUInfo {
-    $cpu = Get-CimInstance Win32_Processor
+    $cpu = Get-CimInstance Win32_Processor | Select-Object -First 1
 
     [PSCustomObject]@{
         Name              = $cpu.Name
