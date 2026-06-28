@@ -28,6 +28,25 @@ function New-BESectionHeader {
     return "<h2 style='color:#0f4c9c;border-bottom:2px solid #0f4c9c;padding-bottom:6px;margin-top:30px;'>$Title</h2>"
 }
 
+function New-BEStatusBadge {
+    param([string]$Status)
+
+    switch ($Status) {
+        "PASS" {
+            return "<span style='background-color:#d1fae5;color:#065f46;padding:4px 10px;border-radius:12px;font-weight:bold;'>PASS</span>"
+        }
+        "WARNING" {
+            return "<span style='background-color:#fef3c7;color:#92400e;padding:4px 10px;border-radius:12px;font-weight:bold;'>WARNING</span>"
+        }
+        "FAIL" {
+            return "<span style='background-color:#fee2e2;color:#991b1b;padding:4px 10px;border-radius:12px;font-weight:bold;'>FAIL</span>"
+        }
+        default {
+            return "<span style='background-color:#e5e7eb;color:#374151;padding:4px 10px;border-radius:12px;font-weight:bold;'>$Status</span>"
+        }
+    }
+}
+
 function New-BEKeyValueTable {
     param(
         [string]$Title,
@@ -71,6 +90,73 @@ $eventLogInfo = Get-BEEventLogInfo
 $updateInfo   = Get-BEUpdateInfo
 $securityInfo = Get-BESecurityInfo
 
+$cDrive = $storageInfo | Where-Object { $_.DriveLetter -eq "C:" } | Select-Object -First 1
+
+$diskStatus = if ($cDrive.FreePercent -ge 20) { "PASS" } elseif ($cDrive.FreePercent -ge 10) { "WARNING" } else { "FAIL" }
+$memoryStatus = if ($memoryInfo.MemoryUsedPercent -lt 80) { "PASS" } elseif ($memoryInfo.MemoryUsedPercent -lt 90) { "WARNING" } else { "FAIL" }
+$uptimeStatus = if ($windowsInfo.UptimeDays -le 14) { "PASS" } elseif ($windowsInfo.UptimeDays -le 30) { "WARNING" } else { "FAIL" }
+$defenderStatus = if ($securityInfo.DefenderEnabled -eq $true) { "PASS" } else { "FAIL" }
+$firewallStatus = if ($securityInfo.PrivateFirewallEnabled -eq $true -and $securityInfo.PublicFirewallEnabled -eq $true) { "PASS" } else { "WARNING" }
+$eventStatus = if ($eventLogInfo.CriticalEventCount -eq 0 -and $eventLogInfo.ErrorEventCount -le 5) { "PASS" } elseif ($eventLogInfo.CriticalEventCount -eq 0) { "WARNING" } else { "FAIL" }
+
+$healthChecks = @($diskStatus, $memoryStatus, $uptimeStatus, $defenderStatus, $firewallStatus, $eventStatus)
+
+$healthScore = 100
+foreach ($status in $healthChecks) {
+    if ($status -eq "WARNING") { $healthScore -= 8 }
+    if ($status -eq "FAIL") { $healthScore -= 18 }
+}
+
+if ($healthScore -lt 0) {
+    $healthScore = 0
+}
+
+$overallStatus = if ($healthScore -ge 90) { "PASS" } elseif ($healthScore -ge 70) { "WARNING" } else { "FAIL" }
+$overallText = if ($healthScore -ge 90) { "Healthy" } elseif ($healthScore -ge 70) { "Needs Attention" } else { "Unhealthy" }
+
+$recommendations = @()
+
+if ($diskStatus -ne "PASS") {
+    $recommendations += "Free up disk space on C:. Current free space is $($cDrive.FreePercent)%."
+}
+
+if ($memoryStatus -ne "PASS") {
+    $recommendations += "Review memory usage. Current usage is $($memoryInfo.MemoryUsedPercent)%."
+}
+
+if ($uptimeStatus -ne "PASS") {
+    $recommendations += "Restart the system. Current uptime is $($windowsInfo.UptimeDays) days."
+}
+
+if ($defenderStatus -ne "PASS") {
+    $recommendations += "Review Microsoft Defender status."
+}
+
+if ($firewallStatus -ne "PASS") {
+    $recommendations += "Review Windows Firewall profiles."
+}
+
+if ($eventStatus -ne "PASS") {
+    $recommendations += "Review recent System event log errors or critical events."
+}
+
+if ($recommendations.Count -eq 0) {
+    $recommendations += "No immediate action required."
+}
+
+$recommendationRows = foreach ($item in $recommendations) {
+    "<tr><td style='border:1px solid #ccc;padding:8px;'>$(ConvertTo-BEHtmlValue $item)</td></tr>"
+}
+
+$healthRows = @(
+    "<tr><td style='border:1px solid #ccc;padding:8px;'>Disk Space</td><td style='border:1px solid #ccc;padding:8px;'>$(New-BEStatusBadge $diskStatus)</td></tr>"
+    "<tr><td style='border:1px solid #ccc;padding:8px;'>Memory Usage</td><td style='border:1px solid #ccc;padding:8px;'>$(New-BEStatusBadge $memoryStatus)</td></tr>"
+    "<tr><td style='border:1px solid #ccc;padding:8px;'>Uptime</td><td style='border:1px solid #ccc;padding:8px;'>$(New-BEStatusBadge $uptimeStatus)</td></tr>"
+    "<tr><td style='border:1px solid #ccc;padding:8px;'>Microsoft Defender</td><td style='border:1px solid #ccc;padding:8px;'>$(New-BEStatusBadge $defenderStatus)</td></tr>"
+    "<tr><td style='border:1px solid #ccc;padding:8px;'>Firewall</td><td style='border:1px solid #ccc;padding:8px;'>$(New-BEStatusBadge $firewallStatus)</td></tr>"
+    "<tr><td style='border:1px solid #ccc;padding:8px;'>Event Logs</td><td style='border:1px solid #ccc;padding:8px;'>$(New-BEStatusBadge $eventStatus)</td></tr>"
+)
+
 $storageRows = foreach ($drive in $storageInfo) {
     "<tr><td style='border:1px solid #ccc;padding:8px;'>$(ConvertTo-BEHtmlValue $drive.DriveLetter)</td><td style='border:1px solid #ccc;padding:8px;'>$(ConvertTo-BEHtmlValue $drive.VolumeName)</td><td style='border:1px solid #ccc;padding:8px;'>$(ConvertTo-BEHtmlValue $drive.FileSystem)</td><td style='border:1px solid #ccc;padding:8px;'>$($drive.TotalGB)</td><td style='border:1px solid #ccc;padding:8px;'>$($drive.UsedGB)</td><td style='border:1px solid #ccc;padding:8px;'>$($drive.FreeGB)</td><td style='border:1px solid #ccc;padding:8px;'>$($drive.FreePercent)%</td></tr>"
 }
@@ -109,6 +195,26 @@ $html = @"
     <p style='margin:6px 0 0 0;'>System Insight & Diagnostics</p>
     <p style='margin:6px 0 0 0;'>Generated: $(Get-Date)</p>
 </div>
+
+$(New-BESectionHeader "Overall System Health")
+<table style='border-collapse:collapse;width:100%;margin-bottom:24px;font-family:Arial,Helvetica,sans-serif;'>
+<tr>
+<th style='background-color:#0f4c9c;color:white;padding:8px;text-align:left;'>Health Score</th>
+<th style='background-color:#0f4c9c;color:white;padding:8px;text-align:left;'>Overall Status</th>
+<th style='background-color:#0f4c9c;color:white;padding:8px;text-align:left;'>Summary</th>
+</tr>
+<tr>
+<td style='border:1px solid #ccc;padding:12px;font-size:22px;font-weight:bold;'>$healthScore / 100</td>
+<td style='border:1px solid #ccc;padding:12px;'>$(New-BEStatusBadge $overallStatus)</td>
+<td style='border:1px solid #ccc;padding:12px;font-weight:bold;'>$overallText</td>
+</tr>
+</table>
+
+$(New-BESectionHeader "Recommendations")
+<table style='border-collapse:collapse;width:100%;margin-bottom:24px;font-family:Arial,Helvetica,sans-serif;'>
+<tr><th style='background-color:#0f4c9c;color:white;padding:8px;text-align:left;'>Recommendation</th></tr>
+$($recommendationRows -join "`n")
+</table>
 
 $(New-BESectionHeader "System Overview")
 <table style='border-collapse:collapse;width:100%;margin-bottom:24px;font-family:Arial,Helvetica,sans-serif;'>
@@ -258,10 +364,14 @@ $(New-BESectionHeader "Recent Critical/Error Events")
 $($eventRows -join "`n")
 </table>
 
-$(New-BEKeyValueTable "Health Summary" @{
-    "Disk Space" = "PASS"
-    "Uptime" = "PASS"
-})
+$(New-BESectionHeader "Health Summary")
+<table style='border-collapse:collapse;width:100%;margin-bottom:24px;font-family:Arial,Helvetica,sans-serif;'>
+<tr>
+<th style='background-color:#0f4c9c;color:white;padding:8px;text-align:left;'>Check</th>
+<th style='background-color:#0f4c9c;color:white;padding:8px;text-align:left;'>Status</th>
+</tr>
+$($healthRows -join "`n")
+</table>
 
 </body>
 </html>
