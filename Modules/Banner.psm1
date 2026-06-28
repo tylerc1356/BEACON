@@ -3,7 +3,7 @@ function Show-Banner {
     param(
         [string]$Title = "BEACON",
         [string]$Subtitle = "System Insight & Diagnostics",
-        [string]$Version = "1.4.0"
+        [string]$Version = "1.5.0"
     )
 
     Clear-Host

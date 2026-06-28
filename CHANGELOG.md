@@ -2,6 +2,50 @@
 
 
 
+\## v1.5.0 - Modular Architecture and Intelligent Reporting
+
+
+
+\### Added
+
+\- Reusable hardware information modules
+
+\- Reusable operating system information modules
+
+\- Reusable security information module
+
+\- Modular report data collection
+
+\- Overall system health score
+
+\- PASS/WARNING/FAIL status badges
+
+\- Report recommendations section
+
+
+
+\### Changed
+
+\- Refactored the full report to use reusable modules
+
+\- Improved HTML report compatibility with inline styling
+
+\- Improved report structure and readability
+
+
+
+\### Fixed
+
+\- Report styling issues
+
+\- Duplicate CPU values
+
+\- Blank memory fields
+
+\- Event log fallback display
+
+
+
 \## v1.4.0 - Beacon Rebrand and HTML Diagnostic Reporting
 
 
