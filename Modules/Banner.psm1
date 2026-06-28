@@ -1,9 +1,9 @@
 function Show-Banner {
 
     param(
-        [string]$Title = "Tyler Toolkit",
-        [string]$Subtitle = "Windows IT Utility",
-        [string]$Version = "1.3.0"
+        [string]$Title = "BEACON",
+        [string]$Subtitle = "System Insight & Diagnostics",
+        [string]$Version = "1.4.0"
     )
 
     Clear-Host
