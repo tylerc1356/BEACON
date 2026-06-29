@@ -1,0 +1,3 @@
+Reports/FullReport/*.html
+Reports/**/*.html
+*.log
