@@ -1,3 +1,5 @@
 Reports/
 *.html
 *.log
+.DS_Store
+._*
