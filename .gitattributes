@@ -1,0 +1,5 @@
+*.ps1 linguist-language=PowerShell
+*.psm1 linguist-language=PowerShell
+*.psd1 linguist-language=PowerShell
+Reports/** linguist-generated=true
+*.html linguist-generated=true
