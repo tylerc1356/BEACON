@@ -60,6 +60,6 @@ v1.5.0
 
 Open PowerShell and run:
 
-Set-Location "(drive letter):\\Beacon"
+Set-Location "(drive letter):\\BEACON"
 
-.\\Beacon.ps1
+.\\BEACON.ps1
